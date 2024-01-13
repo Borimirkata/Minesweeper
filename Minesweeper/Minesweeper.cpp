@@ -56,6 +56,18 @@ void placeMines(const char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N
 	return;
 }
 
+void replaceMine(bool minesBoard[][MAX_SIZE], int N, int& x, int& y) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (minesBoard[i][j] == false) {
+				minesBoard[i][j] = true;
+				minesBoard[x][y] = false;
+				return;
+			}
+		}
+	}
+}
+
 void initializeValidGame(int& N,int& mines) {
 	cout << "Input the size of the board!" << endl;
 	cin >> N;
@@ -71,6 +83,15 @@ void initializeValidGame(int& N,int& mines) {
 	}
 }
 
+void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZE], int N) {
+	if (currentMove == 1) {
+		if (isMine(minesBoard, x, y)) {
+			replaceMine(minesBoard, N, x, y);
+		}
+		currentMove++;
+	}
+}
+
 int main()
 {
 	char board[MAX_SIZE][MAX_SIZE];
@@ -79,4 +100,5 @@ int main()
 	initializeBoard(board, N);
 	printBoard(board, N);
 	bool minesBoard[MAX_SIZE][MAX_SIZE];
+	int currentMove = 1;
 }
