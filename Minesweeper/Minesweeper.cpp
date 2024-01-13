@@ -9,6 +9,13 @@ bool isValidSpace(int N, int x, int y) {
 	return (x >= 0 && x < N && y >= 0 && y < N);
 }
 
+bool isMine(const bool minesBoard[][MAX_SIZE], int x, int y) {
+	if (minesBoard[x][y] == true) {
+		return true;
+	}
+	return false;
+}
+
 void initializeBoard(char board[][MAX_SIZE], int N) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -32,6 +39,21 @@ void initializeMinesBoard(bool minesBoard[][MAX_SIZE], int N) {
 			minesBoard[i][j] = false;
 		}
 	}
+}
+
+void placeMines(const char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N, int mines) {
+	initializeMinesBoard(minesBoard, N);
+	int placedMines = 0;
+	while (placedMines < mines) {
+		int random = rand() % (N * N);
+		int x = random / N;
+		int y = random % N;
+		if (minesBoard[x][y] == false) {
+			minesBoard[x][y] = true;
+			placedMines++;
+		}
+	}
+	return;
 }
 
 void initializeValidGame(int& N,int& mines) {
