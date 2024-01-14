@@ -56,6 +56,25 @@ void placeMines(const char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N
 	return;
 }
 
+int countNeighborMines(const bool minesBoard[][MAX_SIZE], int x, int y, int N) {
+	int bombs = 0;
+	if (isValidSpace(N, x, y) && isMine(minesBoard, x, y)) {
+		bombs++;
+	}
+	return bombs;
+}
+
+int countConsecutiveNeighborMines(const bool minesBoard[][MAX_SIZE], int& x, int& y, int N) {
+	return countNeighborMines(minesBoard, x - 1, y, N) +
+		countNeighborMines(minesBoard, x + 1, y, N) +
+		countNeighborMines(minesBoard, x, y + 1, N) +
+		countNeighborMines(minesBoard, x, y - 1, N) +
+		countNeighborMines(minesBoard, x - 1, y + 1, N) +
+		countNeighborMines(minesBoard, x - 1, y - 1, N) +
+		countNeighborMines(minesBoard, x + 1, y + 1, N) +
+		countNeighborMines(minesBoard, x + 1, y - 1, N);
+}
+
 void replaceMine(bool minesBoard[][MAX_SIZE], int N, int& x, int& y) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -92,10 +111,11 @@ void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZ
 	}
 }
 
-int main()
-{
+int main(){
+	srand(time(0));
 	char board[MAX_SIZE][MAX_SIZE];
 	int N = 0, mines = 0;
+	int movesLeft = 0;
 	initializeValidGame(N, mines);
 	initializeBoard(board, N);
 	printBoard(board, N);
