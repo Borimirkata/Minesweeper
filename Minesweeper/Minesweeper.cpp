@@ -155,6 +155,10 @@ void initializeValidGame(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], in
 	cout << "Input the size of the board(Between 3 and 10)!" << endl;
 	cin >> N;
 	while (N < 3 || N > 10) {
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
 		cout << "Invalid input. Try again!" << endl;
 		cin >> N;
 	}
@@ -162,6 +166,10 @@ void initializeValidGame(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], in
 	cout << "Input how many mines do you want(Between 1 and " << 3 * N << ")!" << endl;
 	cin >> mines;
 	while (mines < 1 || mines > 3 * N) {
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
 		cout << "Invalid input. Try again!" << endl;
 		cin >> mines;
 	}
@@ -176,6 +184,20 @@ void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZ
 			replaceMine(minesBoard, N, x, y);
 		}
 		currentMove++;
+	}
+}
+
+void untilItsValid(int N, int& x, int& y, char* inputArr, int flags) {
+	if (!inputArr) {
+		return;
+	}
+	while (!isValidSpace(N, x, y) || !validateString(inputArr) || cin.fail()) {
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+		cout << "Invalid action!Try again!" << endl;
+		cin >> inputArr >> x >> y;
 	}
 }
 
