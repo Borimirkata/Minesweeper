@@ -1,7 +1,23 @@
+/**
+*
+* Solution to course project # 5
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2023/2024
+*
+* @author Borimir Aleksiev
+* @idnumber 8MI0600283 * @compiler VC
+*
+* Minesweeper Game Task Solution
+*
+*/
+
 #include<iostream>
 using namespace std;
 
 constexpr int MAX_SIZE = 10;
+constexpr int MAX_MINES = 30;
+constexpr int MAX_LENGTH = 1024;
 const char initialValue = '+';
 const char bombValue = '*';
 
@@ -87,6 +103,27 @@ void replaceMine(bool minesBoard[][MAX_SIZE], int N, int& x, int& y) {
 	}
 }
 
+bool compareStrings(const char* inputArr, const char* str2) {
+	if (!inputArr || !str2) {
+		return false;
+	}
+	while (*inputArr && *str2) {
+		if (*inputArr != *str2) {
+			return false;
+		}
+		inputArr++;
+		str2++;
+	}
+	return (*inputArr == '\0' && *str2 == '\0');
+}
+
+bool validateString(const char* input) {
+	if (!input) {
+		return false;
+	}
+	return (compareStrings(input, "open") || compareStrings(input, "mark") || compareStrings(input, "unmark"));
+}
+
 void initializeValidGame(int& N,int& mines) {
 	cout << "Input the size of the board!" << endl;
 	cin >> N;
@@ -116,6 +153,7 @@ int main(){
 	char board[MAX_SIZE][MAX_SIZE];
 	int N = 0, mines = 0;
 	int movesLeft = 0;
+	char inputArr[MAX_LENGTH];
 	initializeValidGame(N, mines);
 	initializeBoard(board, N);
 	printBoard(board, N);
