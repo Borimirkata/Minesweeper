@@ -20,6 +20,7 @@ constexpr int MAX_MINES = 30;
 constexpr int MAX_LENGTH = 1024;
 const char initialValue = '+';
 const char bombValue = '*';
+const char flagValue = '!';
 
 bool isValidSpace(int N, int x, int y) {
 	return (x >= 0 && x < N && y >= 0 && y < N);
@@ -41,7 +42,21 @@ void initializeBoard(char board[][MAX_SIZE], int N) {
 }
 
 void printBoard(const char board[][MAX_SIZE], int N) {
+	cout << " |";
 	for (int i = 0; i < N; i++) {
+		cout << i << " ";
+	}
+	cout << endl;
+
+	cout << "-|";
+	int length = N * 2;
+	for (int i = 0; i < length; i++) {
+		cout << "-";
+	}
+	cout << endl;
+
+	for (int i = 0; i < N; i++) {
+		cout << i << "|";
 		for (int j = 0; j < N; j++) {
 			cout << board[i][j] << " ";
 		}
@@ -124,19 +139,35 @@ bool validateString(const char* input) {
 	return (compareStrings(input, "open") || compareStrings(input, "mark") || compareStrings(input, "unmark"));
 }
 
-void initializeValidGame(int& N,int& mines) {
-	cout << "Input the size of the board!" << endl;
+int counterMovesLeft(const char board[][MAX_SIZE], int N, int mines) {
+	int counter = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (board[i][j] == initialValue || board[i][j] == flagValue) {
+				counter++;
+			}
+		}
+	}
+	return (counter - mines);
+}
+
+void initializeValidGame(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int& N, int& mines, int& flags, int& movesLeft) {
+	cout << "Input the size of the board(Between 3 and 10)!" << endl;
 	cin >> N;
 	while (N < 3 || N > 10) {
 		cout << "Invalid input. Try again!" << endl;
 		cin >> N;
 	}
-	cout << "Input how many mines do you want:" << endl;
+	initializeBoard(board, N);
+	cout << "Input how many mines do you want(Between 1 and " << 3 * N << ")!" << endl;
 	cin >> mines;
 	while (mines < 1 || mines > 3 * N) {
 		cout << "Invalid input. Try again!" << endl;
 		cin >> mines;
 	}
+	flags = mines;
+	placeMines(board, minesBoard, N, mines);
+	movesLeft = counterMovesLeft(board, N, mines);
 }
 
 void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZE], int N) {
@@ -148,15 +179,14 @@ void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZ
 	}
 }
 
-int main(){
+int main() {
 	srand(time(0));
 	char board[MAX_SIZE][MAX_SIZE];
 	int N = 0, mines = 0;
 	int movesLeft = 0;
 	char inputArr[MAX_LENGTH];
-	initializeValidGame(N, mines);
-	initializeBoard(board, N);
-	printBoard(board, N);
 	bool minesBoard[MAX_SIZE][MAX_SIZE];
 	int currentMove = 1;
+	int flags = 0;
+	initializeValidGame(board, minesBoard, N, mines, flags, movesLeft);
 }
