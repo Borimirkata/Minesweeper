@@ -151,6 +151,32 @@ int counterMovesLeft(const char board[][MAX_SIZE], int N, int mines) {
 	return (counter - mines);
 }
 
+void putFlag(char board[][MAX_SIZE], int x, int y, int& flags) {
+	if (flags == 0) {
+		cout << "You cannot put any more flags" << endl;
+		return;
+	}
+	if (board[x][y] != initialValue) {
+		cout << "You cannot place your flag there!" << endl;
+		return;
+	}
+	else if (board[x][y] == initialValue) {
+		board[x][y] = flagValue;
+		flags--;
+	}
+}
+
+void removeFlag(char board[][MAX_SIZE], int x, int y, int& flags) {
+	if (board[x][y] != flagValue) {
+		cout << "These coordinates were not marked!" << endl;
+		return;
+	}
+	else if (board[x][y] == flagValue) {
+		board[x][y] = initialValue;
+		flags++;
+	}
+}
+
 void initializeValidGame(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int& N, int& mines, int& flags, int& movesLeft) {
 	cout << "Input the size of the board(Between 3 and 10)!" << endl;
 	cin >> N;
