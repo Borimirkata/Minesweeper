@@ -22,6 +22,8 @@ const char initialValue = '+';
 const char bombValue = '*';
 const char flagValue = '!';
 
+bool playMinesweeper(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N, int x, int y, int& movesLeft, int& flags, const char inputArr[MAX_LENGTH]);
+
 bool isValidSpace(int N, int x, int y) {
 	return (x >= 0 && x < N && y >= 0 && y < N);
 }
@@ -161,6 +163,14 @@ int counterMovesLeft(const char board[][MAX_SIZE], int N, int mines) {
 	return (counter - mines);
 }
 
+void checkMines(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N, int x, int y, int movesLeft, int flags, const char inputArr[MAX_LENGTH]) {
+	if (isValidSpace(N, x, y)) {
+		if (isMine(minesBoard, x, y) == false) {
+			playMinesweeper(board, minesBoard, N, x, y, movesLeft, flags, inputArr);
+		}
+	}
+}
+
 void putFlag(char board[][MAX_SIZE], int x, int y, int& flags) {
 	if (flags == 0) {
 		cout << "You cannot put any more flags" << endl;
@@ -214,8 +224,8 @@ void initializeValidGame(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], in
 	movesLeft = counterMovesLeft(board, N, mines);
 }
 
-void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZE], int N) {
-	if (currentMove == 1) {
+void handleFirstMove(int& currentMove, int& x, int& y, bool minesBoard[][MAX_SIZE], int N, const char inputArr[MAX_LENGTH]) {
+	if (validateString(inputArr) && compareStrings(inputArr, "open")) {
 		if (isMine(minesBoard, x, y)) {
 			replaceMine(minesBoard, N, x, y);
 		}
@@ -243,14 +253,76 @@ void handleWinningCondition(char board[][MAX_SIZE], const bool minesBoard[][MAX_
 	cout << "Congratulations, You win!" << endl;
 }
 
+bool playMinesweeper(char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N, int x, int y, int& movesLeft, int& flags, const char inputArr[MAX_LENGTH]) {
+	if (compareStrings(inputArr, "open")) {
+		if (board[x][y] != initialValue) {
+			return false;
+		}
+		if (minesBoard[x][y] == true) {
+			stepOnMine(board, minesBoard, N);
+			printBoard(board, N);
+			cout << "You lost the Game!" << endl;
+			return true;
+		}
+		int count = countConsecutiveNeighborMines(minesBoard, x, y, N);
+		board[x][y] = count + '0';
+		if (count == 0) {
+			checkMines(board, minesBoard, N, x - 1, y, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x + 1, y, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x, y + 1, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x, y - 1, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x - 1, y + 1, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x - 1, y - 1, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x + 1, y + 1, movesLeft, flags, inputArr);
+			checkMines(board, minesBoard, N, x + 1, y - 1, movesLeft, flags, inputArr);
+		}
+		return false;
+	}
+	else if (compareStrings(inputArr, "mark")) {
+		putFlag(board, x, y, flags);
+		return false;
+	}
+	else if (compareStrings(inputArr, "unmark")) {
+		removeFlag(board, x, y, flags);
+		return false;
+	}
+	else {
+		cout << "Invalid command" << endl;
+		return false;
+	}
+}
+
 int main() {
 	srand(time(0));
+	bool gameOver = false;
 	char board[MAX_SIZE][MAX_SIZE];
 	int N = 0, mines = 0;
-	int movesLeft = 0;
 	char inputArr[MAX_LENGTH];
-	bool minesBoard[MAX_SIZE][MAX_SIZE];
-	int currentMove = 1;
+	int movesLeft = 0;
 	int flags = 0;
+	bool minesBoard[MAX_SIZE][MAX_SIZE];
+
 	initializeValidGame(board, minesBoard, N, mines, flags, movesLeft);
+
+	int currentMove = 1;
+	while (gameOver == false) {
+		printBoard(board, N);
+		int x, y;
+		cout << "Flags: " << flags << endl;
+		cout << "Enter command and coordinates: ";
+		cin >> inputArr >> x >> y;
+		untilItsValid(N, x, y, inputArr, flags);
+
+		if (currentMove == 1) {
+			handleFirstMove(currentMove, x, y, minesBoard, N, inputArr);
+		}
+
+		gameOver = playMinesweeper(board, minesBoard, N, x, y, movesLeft, flags, inputArr);
+		movesLeft = counterMovesLeft(board, N, mines);
+		if (gameOver == false && movesLeft == 0) {
+			handleWinningCondition(board, minesBoard, N);
+			return 0;
+		}
+	}
+
 }
