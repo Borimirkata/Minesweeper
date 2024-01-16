@@ -106,6 +106,16 @@ int countConsecutiveNeighborMines(const bool minesBoard[][MAX_SIZE], int& x, int
 		countNeighborMines(minesBoard, x + 1, y - 1, N);
 }
 
+void stepOnMine(char board[][MAX_SIZE], const bool minesBoard[][MAX_SIZE], int N) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (minesBoard[i][j]) {
+				board[i][j] = bombValue;
+			}
+		}
+	}
+}
+
 void replaceMine(bool minesBoard[][MAX_SIZE], int N, int& x, int& y) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
@@ -225,6 +235,12 @@ void untilItsValid(int N, int& x, int& y, char* inputArr, int flags) {
 		cout << "Invalid action!Try again!" << endl;
 		cin >> inputArr >> x >> y;
 	}
+}
+
+void handleWinningCondition(char board[][MAX_SIZE], const bool minesBoard[][MAX_SIZE], int N) {
+	stepOnMine(board, minesBoard, N);
+	printBoard(board, N);
+	cout << "Congratulations, You win!" << endl;
 }
 
 int main() {
