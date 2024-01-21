@@ -64,6 +64,9 @@ void replaceMine(bool minesBoard[][MAX_SIZE], int N, int& x, int& y) {
 	}
 }
 
+//For the placeMines function: with %(N*N) i limit the scope of rand() to be between 0 and N*N-1
+//and then for the x and y,i guarantee that they will be in the range between 0 and N-1
+
 void placeMines(const char board[][MAX_SIZE], bool minesBoard[][MAX_SIZE], int N, int mines) {
 	initializeMinesBoard(minesBoard, N);
 	int placedMines = 0;
